@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<style type="text/css">
+    /* Збільшений шрифт, як у фінальній версії ЕГДС */
+    body { margin: 0; padding: 5px 10px; font-family: "Times New Roman", serif; font-size: 11pt; line-height: 1.15; }
+    .container { max-width: 950px; margin: 0 auto; }
+    .tnr { font-family: "Times New Roman", serif; }
+    .title-large { font: bold 13pt "Times New Roman", serif; }
+    .section-title { text-decoration: underline; font: bold 11.5pt "Times New Roman", serif; display: inline-block; margin-top: 2px; margin-bottom: 2px; }
+    .row { margin-bottom: 2px; }
+    .label { padding-right: 5px; font-weight: bold; font-size: 11pt; }
+    
+    input[type="text"], input[type="date"] { font-family: "Times New Roman", serif; font-size: 10.5pt; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; }
+    select { font-family: "Times New Roman", serif; font-size: 10.5pt; padding: 1px 3px; border: 1px solid #aaa; border-radius: 3px; background-color: #f9f9f9; cursor: pointer; }
+    
+    /* Мульти-вибір */
+    .dd { position: relative; display: inline-block; cursor: pointer; margin-left: 2px; }
+    .dd-btn { border: 1px solid #aaa; background: #f9f9f9; padding: 1px 4px; border-radius: 3px; font-size: 9pt; display: inline-block; user-select: none; }
+    .dd-content { display: none; position: absolute; left: 0; top: 100%; background-color: #fff; box-shadow: 0px 4px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid #ccc; min-width: 220px; max-height: 250px; overflow-y: auto; user-select: none; }
+    .dd-content div { padding: 4px 8px; font-size: 10.5pt; color: #333; transition: background 0.1s; }
+    .dd-content div:hover { background-color: #d0e8ff; }
+    
+    /* Блок заключення */
+    .conclusion-box { margin-top: 2px; margin-bottom: 4px; border: 1px solid #ccc; padding: 4px; border-radius: 3px; background: #fff; }
+    .sub-conclusion { margin-left: 15px; -webkit-columns: 2; -moz-columns: 2; columns: 2; gap: 10px; }
+    
+    .main-section-label { display: block; margin-bottom: 2px; font-size: 10.5pt; cursor: pointer; font-weight: bold; color: #333; }
+    .main-section-label input[type="checkbox"] { margin-right: 5px; vertical-align: middle; }
+    
+    .conclusion-item { display: none; break-inside: avoid; margin-bottom: 1px; font-size: 10pt; }
+    .conclusion-item label { display: inline-block; cursor: pointer; margin-right: 3px; }
+    .conclusion-item input[type="checkbox"] { margin-right: 5px; vertical-align: middle; }
+    
+    .diag-item { font-size: 10.5pt; display: inline-flex; align-items: center; margin-right: 15px; break-inside: avoid; }
+    .diag-item label { display: inline-flex; align-items: center; cursor: pointer; }
+    .diag-item input[type="checkbox"] { margin-right: 5px; }
+    
+    .inline-text { border: none; border-bottom: 1px solid #000; background: transparent; outline: none; font-family: "Times New Roman", serif; font-size: 10pt; margin-left: 2px; padding: 0 2px; border-radius: 0; }
+    .inline-select { border: none; border-bottom: 1px solid #000; background: transparent; outline: none; font-family: "Times New Roman", serif; font-size: 10pt; margin-left: 2px; padding: 0; border-radius: 0; cursor: pointer; }
+    
+    .separator { height: 2px; width: 100%; break-inside: avoid; }
+    .print-hidden { display: none !important; }
+
+    /* Кнопка друку */
+    .print-btn { padding: 8px 20px; font-size: 12pt; font-weight: bold; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
+    .print-btn:hover { background: #004494; }
+
+    /* Налаштування для друку в 1 сторінку */
+    @media print {
+        @page { size: A4; margin: 0.5cm; }
+        body { padding: 0; font-size: 9.5pt; line-height: 1.05; }
+        .container { max-width: 100%; width: 100%; }
+        input[type="text"], select { border: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: transparent !important; margin: 0 !important; padding: 0 !important; height: auto !important; }
+        
+        .noprint { display: none !important; }
+        
+        .conclusion-box { border: none !important; padding: 0 !important; margin: 0 !important; background: transparent !important; }
+        .sub-conclusion { display: block !important; margin: 0 !important; padding: 0 !important; -webkit-columns: 2 !important; -moz-columns: 2 !important; columns: 2 !important; gap: 5px !important; }
+        .separator { display: none !important; height: 0 !important; margin: 0 !important; }
+        .conclusion-item { margin-bottom: 0 !important; }
+        .main-section-label { display: none !important; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 2px;">
+        <tr>
+            <td width="48%"></td>
+            <td width="52%" align="left" style="font-size: 9.5pt; line-height: 1.1;">
+                <b>ФОП Ткачук Роман Васильович. Ендоскопічний кабінет</b><br>
+                Черкаська обл., Уманський р-н, Паланська ТГ, комплекс «Білогрудівка», вул. Білогрудівська, 2<br>
+                Тел.: 067-506-89-62, код ЄДРПОУ: 2868606514<br>
+                Ліцензія МОЗ України згідно наказу від 04.04.2025 № 585
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center" style="padding: 4px 0;"><span class="tnr" style="font-weight: bold; font-size: 12pt;">ЕНДОСКОПІЧНИЙ КАБІНЕТ</span></td>
+        </tr>
+    </table>
+
+    <div class="row">
+        <span class="label" style="font-size: 12pt;">ПІБ:</span> 
+        <input type="text" style="width: 380px; font-size: 12pt; font-weight: bold;" value=""> 
+        <span class="label" style="padding-left: 10px;">Вік:</span> <input type="text" style="width: 45px;" value="">
+    </div>
+    <div class="row">
+        <span class="label">Амбулаторна МК №:</span> <input type="text" style="width: 100px;" value="">
+        <span class="label" style="padding-left: 10px;">Ким направлений:</span> 
+        <select class="noprint" id="referral-select" onchange="toggleReferralInput()">
+            <option>Сімейний лікар</option>
+            <option>Самозвернення</option>
+            <option value="custom">інший лікар (вписати)</option>
+        </select>
+        <input type="text" id="custom-referral" placeholder="ПІБ лікаря..." style="width: 200px; display: none; margin-left: 5px;">
+    </div>
+    <div class="row">
+        <span class="label">Адреса проживання:</span> <input type="text" style="width: 580px;" value="">
+    </div>
+    
+    <div class="row" style="margin-top: 2px;">
+        <span class="label">Апарат:</span> <input type="text" style="width: 230px;" value="Olympus Evis Lucera CF-Q260L">
+        <span class="label" style="padding-left: 10px;">Процесор:</span> <input type="text" style="width: 230px;" value="Olympus Evis Lucera CV-260 SL">
+    </div>
+    <div class="row">
+        <span class="label">Обробка апарату:</span> <input type="text" style="width: 250px;" value="террацид преміум 10 хвилин">
+        <span class="label" style="padding-left: 10px;">Знеболення:</span> 
+        <select id="anesthesia-select" onchange="toggleSedationDetails()">
+            <option>ні</option>
+            <option selected value="sedation">в/в седація</option>
+        </select>
+    </div>
+    
+    <div id="sedation-details" style="display: block; margin-left: 10px; font-size: 9.5pt; line-height: 1.1; margin-bottom: 2px;">
+        <div><b>Знеболення:</b> внутрішньовенна анестезія 1% розчином Пропофолу.</div>
+        <div><b>Моніторинг:</b> контроль АТ, PS, SpO2 + трансназальна інсуфляція O2. <b>Анестезіолог:</b> <input type="text" class="inline-text" style="width: 120px;" value="Чорногуз"></div>
+    </div>
+
+    <div class="row" style="margin-bottom: 2px;">
+        <label style="font-family: 'Times New Roman', serif; font-size: 10.5pt; cursor: pointer;">
+            <input type="checkbox" checked style="margin-right: 5px; vertical-align: middle;">
+            Інформаційна згода на виконання обстеження отримана до обстеження.
+        </label>
+    </div>
+
+    <div class="row" style="padding-top: 2px; padding-bottom: 2px; text-align: center;">
+        <span class="title-large">ВІДЕОКОЛОНОСКОПІЯ №</span> 
+        <input type="text" style="width: 70px; font-weight: bold; font-size: 12pt; text-align: center;">
+    </div>
+
+    <!-- ПІДГОТОВКА -->
+    <div class="row">
+        <span class="label">Підготовка кишківника:</span> 
+        <input type="text" id="prep-text" value="Двоетапна: Ізіклін + 4 таб. Афлетин. За Бостонською шкалою: 3+3+3 = 9 балів" style="width: 550px;">
+        <select class="noprint helper-select" data-target="prep-text">
+            <option>Двоетапна: Ізіклін + 4 таб. Афлетин. За Бостонською шкалою: 3+3+3 = 9 балів</option>
+            <option>Двоетапна: Ізіклін + 4 таб. Афлетин. За Бостонською шкалою: 2+3+3 = 8 балів</option>
+            <option>Двоетапна: Фортранс. За Бостонською шкалою: 3+3+3 = 9 балів</option>
+            <option>Підготовка недостатня (менше 6 балів за BBPS)</option>
+        </select>
+    </div>
+
+    <!-- ОГЛЯД -->
+    <div class="row" style="padding-top: 4px;"><span class="section-title">ОПИС ОБСТЕЖЕННЯ</span></div>
+    
+    <div class="row">
+        <span class="label">Перианальна ділянка та Rectum:</span> 
+        <input type="text" id="perianal" value="" style="width: 300px;">
+        <select class="noprint helper-select" data-target="perianal">
+            <option>без особливостей, тонус сфінктера збережений</option>
+            <option>визначаються збільшені внутрішні гемороїдальні вузли</option>
+            <option>визначаються зовнішні гемороїдальні вузли</option>
+            <option>анальна тріщина</option>
+            <option>тонус сфінктера знижений</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <span class="label">Апарат проведено до:</span> 
+        <input type="text" id="insertion" value="" style="width: 250px;">
+        <select class="noprint helper-select" data-target="insertion">
+            <option>купола сліпої кишки (дно оглянуто)</option>
+            <option>термінального відділу клубової кишки</option>
+            <option>печінкового вигину ободової кишки</option>
+            <option>селезінкового вигину ободової кишки</option>
+            <option>низхідної ободової кишки</option>
+            <option>через недостатню підготовку подальший огляд припинено</option>
+            <option>через пухлинний стеноз подальший огляд неможливий</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Вміст:</span> 
+        <input type="text" id="bowel-content" value="" style="width: 150px;">
+        <select class="noprint helper-select" data-target="bowel-content">
+            <option>прозора рідина</option>
+            <option>мутна рідина</option>
+            <option>залишки калових мас</option>
+            <option>слиз, жовч</option>
+            <option>кров</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <span class="label">Тонус кишки:</span> 
+        <input type="text" id="tonus" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="tonus">
+            <option>збережений</option>
+            <option>підвищений (спазмований)</option>
+            <option>знижений</option>
+            <option>ригідність стінок</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Гаустрація:</span> 
+        <input type="text" id="haustration" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="haustration">
+            <option>виражена, рівномірна</option>
+            <option>згладжена</option>
+            <option>асиметрична</option>
+            <option>відсутня</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <span class="label">Слизова оболонка товстої кишки:</span> 
+        <input type="text" id="col-mucosa" value="" style="width: 300px;">
+        <select class="noprint helper-select" data-target="col-mucosa">
+            <option>рожева, гладка, блискуча</option>
+            <option>вогнищево гіперемована</option>
+            <option>дифузно гіперемована, набрякла</option>
+            <option>бліда</option>
+            <option>з крововиливами</option>
+            <option>ерозована</option>
+            <option>виразкована</option>
+            <option>вкрита фібрином/слизом</option>
+        </select>
+    </div>
+    
+    <div class="row">
+        <span class="label">Судинний малюнок:</span> 
+        <input type="text" id="vascular" value="" style="width: 150px;">
+        <select class="noprint helper-select" data-target="vascular">
+            <option>чіткий</option>
+            <option>змазаний</option>
+            <option>посилений</option>
+            <option>відсутній</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Клубова кишка (Terminal Ileum):</span> 
+        <input type="text" id="ileum" value="" style="width: 250px;">
+        <select class="noprint helper-select" data-target="ileum">
+            <option>не оглядалась</option>
+            <option>слизова рожева, ворсинки збережені</option>
+            <option>слизова набрякла, гіперемована, з лімфоїдною гіперплазією</option>
+            <option>визначаються ерозії/афти</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <span class="label">Патологічні утворення (Поліпи/Дивертикули/Пухлини):</span> 
+        <input type="text" id="col-pathology" value="" style="width: 550px;" placeholder="...">
+        <select class="noprint helper-select" data-target="col-pathology">
+            <option>не виявлено</option>
+            <option>у сліпій кишці визначається поліп до ... мм</option>
+            <option>у висхідній ободовій кишці визначається ...</option>
+            <option>у поперечно-обідній кишці визначається ...</option>
+            <option>у низхідній ободовій кишці визначається ...</option>
+            <option>у сигмоподібній кишці визначається ...</option>
+            <option>у прямій кишці визначається ...</option>
+            <option>множинні дивертикули без ознак запалення</option>
+            <option>дивертикули з ознаками дивертикуліту</option>
+            <option>поліп на вузькій ніжці (тип 0-Ip за Паризькою класифікацією)</option>
+            <option>поліп на широкій основі (тип 0-Is)</option>
+            <option>плоский поліп (тип 0-IIa)</option>
+        </select>
+    </div>
+
+    <!-- ДІАГНОСТИЧНІ МАНІПУЛЯЦІЇ -->
+    <div class="row" style="padding-top: 4px;"><span class="section-title">ДІАГНОСТИЧНІ МАНІПУЛЯЦІЇ</span></div>
+    <div class="row">
+        <select class="noprint" id="diag-select" onchange="toggleDiagInput()" style="margin-right: 5px;">
+            <option value="none" selected>не проводились</option>
+            <option value="done">проводились</option>
+        </select>
+        <span id="diag-none-text" style="font-size: 10.5pt;">не проводились</span>
+        
+        <span id="diag-done-wrap" style="display: none; align-items: center; flex-wrap: wrap;">
+            <span class="diag-item">
+                <label>
+                    <input type="checkbox" onchange="document.getElementById('biopsy-inputs').style.display = this.checked ? 'inline' : 'none';"> біопсія
+                </label>
+                <span id="biopsy-inputs" style="display: none; margin-left: 2px;">
+                    взято <input type="text" id="biopsy-qty" class="inline-text" style="width: 25px; text-align: center;"> шматочків з <input type="text" id="biopsy-loc" class="inline-text" style="width: 350px;" placeholder="локалізація...">
+                </span>
+            </span>
+        </span>
+    </div>
+
+    <!-- ЛІКУВАЛЬНІ МАНІПУЛЯЦІЇ -->
+    <div class="row" style="padding-top: 2px;"><span class="section-title">ЛІКУВАЛЬНІ МАНІПУЛЯЦІЇ</span></div>
+    <div class="row">
+        <select class="noprint" id="treat-select" onchange="toggleManipInput('treat-select', 'treat-input')" style="margin-right: 5px;">
+            <option value="none" selected>не проводились</option>
+            <option value="done">проводились</option>
+        </select>
+        <input type="text" id="treat-input" value="не проводились" style="width: 500px;">
+        <select class="noprint helper-select" data-target="treat-input">
+            <option>Поліпектомія (холодна петля)</option>
+            <option>Поліпектомія (гаряча петля/ЕМР)</option>
+            <option>Ендоскопічний гемостаз</option>
+        </select>
+    </div>
+
+    <!-- ЗАКЛЮЧЕННЯ -->
+    <div class="row" style="padding-top: 4px;">
+        <span class="section-title" style="font-size: 13pt;">ЗАКЛЮЧЕННЯ:</span>
+    </div>
+    <div class="conclusion-box">
+        <div>
+            <label class="main-section-label">
+                <input type="checkbox" onchange="toggleSection('block-colon', this)"> ПАТОЛОГІЯ ТОВСТОЇ КИШКИ (розгорнути список)
+            </label>
+            <div id="block-colon" class="sub-conclusion">
+                <div class="conclusion-item"><label><input type="checkbox"> Органічної патології товстого кишківника не виявлено</label> <input type="text" class="inline-text" style="width: 50px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Внутрішній геморой</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Зовнішній геморой</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Анальна тріщина</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Дивертикулярна хвороба товстого кишківника</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Дивертикуліт</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Поліп(и) </label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option>
+                        <option>сліпої кишки</option>
+                        <option>висхідної ободової кишки</option>
+                        <option>поперечно-обідної кишки</option>
+                        <option>низхідної ободової кишки</option>
+                        <option>сигмоподібної кишки</option>
+                        <option>прямої кишки</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 150px;" placeholder="відділ...">
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Стан після ендоскопічної поліпектомії</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Хронічний коліт</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Виразковий коліт (НВК)</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Хвороба Крона</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Термінальний ілеїт</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Susp. neo</label> <input type="text" class="inline-text" style="width: 150px;" placeholder="локалізація..."></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Інше:</label> <input type="text" class="inline-text" placeholder="дописати..." style="width: 250px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Інше:</label> <input type="text" class="inline-text" placeholder="дописати..." style="width: 250px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- РЕКОМЕНДАЦІЇ -->
+    <div class="row" style="padding-top: 2px;"><span class="section-title">РЕКОМЕНДАЦІЇ:</span></div>
+    <div class="conclusion-box" style="margin-bottom: 2px;">
+        <label class="main-section-label">
+            <input type="checkbox" onchange="toggleSection('block-rec', this)"> (розгорнути рекомендації)
+        </label>
+        <div id="block-rec" class="sub-conclusion">
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація сімейного лікаря</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація хірурга</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація гастроентеролога</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація проктолога</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація онколога в ЧООД</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація:</label> <input type="text" class="inline-text" placeholder="впишіть лікаря..." style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Прийом препарату "Метеоспазміл" 1 капс. х 3р/д</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+            <div class="conclusion-item">
+                <label><input type="checkbox"> Контрольна колоноскопія через:</label> 
+                <input type="text" class="inline-text" style="width: 40px; text-align: center;"> 
+                <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                    <option>місяців</option>
+                    <option>років</option>
+                </select>
+                <input type="text" class="inline-text" style="width: 80px;">
+            </div>
+            <div class="conclusion-item"><label><input type="checkbox"> КТ ОЧП + ОМТ</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Інше:</label> <input type="text" class="inline-text" placeholder="Своя рекомендація..." style="width: 350px;"></div>
+        </div>
+    </div>
+
+    <!-- ПІДПИСИ, ДАТА ТА КНОПКА -->
+    <div class="row" style="padding-top: 15px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="width: 30%;">
+            <span class="label">Дата:</span> <input type="date" id="current-date" style="border:none; font-family:'Times New Roman',serif; font-size:10.5pt;">
+        </div>
+        
+        <!-- Кнопка друку по центру (зникає при друку) -->
+        <div class="noprint" style="width: 30%; text-align: center;">
+            <button class="print-btn" onclick="window.print()">🖨️ Друк / Зберегти в PDF</button>
+        </div>
+
+        <div style="width: 40%; text-align: right; padding-right: 20px;">
+            <span class="label">Лікар:</span> <select style="border:none; background:transparent; font-family:'Times New Roman',serif; font-size:10.5pt; font-weight:bold; outline:none; -webkit-appearance:none; appearance:none;"><option>Ткачук Р.В.</option></select>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Встановлення поточної дати
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        document.getElementById('current-date').value = yyyy + '-' + mm + '-' + dd;
+        
+        // Створення випадаючих списків
+        var selects = document.querySelectorAll("select.helper-select");
+        for (var i = 0; i < selects.length; i++) {
+            (function(sel) {
+                var dd = document.createElement("div");
+                dd.className = "dd noprint";
+                var targetId = sel.getAttribute("data-target");
+                
+                var btn = document.createElement("span");
+                btn.className = "dd-btn";
+                btn.innerHTML = "▼";
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var wasVisible = (content.style.display === "block");
+                    var allContents = document.querySelectorAll('.dd-content');
+                    for (var j = 0; j < allContents.length; j++) {
+                        allContents[j].style.display = 'none';
+                    }
+                    if (!wasVisible) content.style.display = "block";
+                };
+                dd.appendChild(btn);
+                
+                var content = document.createElement("div");
+                content.className = "dd-content";
+                
+                for (var k = 0; k < sel.options.length; k++) {
+                    (function(opt) {
+                        var item = document.createElement("div");
+                        item.innerHTML = opt.text;
+                        item.onclick = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            appendMultiTextId(targetId, opt.text);
+                        };
+                        content.appendChild(item);
+                    })(sel.options[k]);
+                }
+                
+                dd.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                };
+
+                dd.appendChild(content);
+                sel.parentNode.insertBefore(dd, sel);
+                sel.style.display = "none";
+            })(selects[i]);
+        }
+
+        document.addEventListener("click", function() {
+            var allContents = document.querySelectorAll('.dd-content');
+            for (var j = 0; j < allContents.length; j++) {
+                allContents[j].style.display = 'none';
+            }
+        });
+        
+        // Відслідковування кліків по галочках діагнозів
+        var conclCheckboxes = document.querySelectorAll('.conclusion-item input[type="checkbox"]');
+        for (var c = 0; c < conclCheckboxes.length; c++) {
+            conclCheckboxes[c].addEventListener('change', refreshConclusionVisibility);
+        }
+    });
+
+    function appendMultiTextId(inputId, val) {
+        var input = document.getElementById(inputId);
+        if (!input) return;
+        var current = input.value.replace(/^\s+|\s+$/g, '');
+        // Дефолтні значення для ВКС, якщо вони будуть
+        var defaults = ["нормальний", "нормальна", "немає", "не змінені"];
+        
+        var isDefault = false;
+        for (var i = 0; i < defaults.length; i++) {
+            if (current === defaults[i]) {
+                isDefault = true;
+                break;
+            }
+        }
+        
+        if (current === "" || isDefault || val.indexOf("▼") !== -1) {
+            if (val.indexOf("▼") === -1) input.value = val;
+        } else {
+            var parts = current.split(",");
+            var exists = false;
+            for (var j = 0; j < parts.length; j++) {
+                if (parts[j].replace(/^\s+|\s+$/g, '') === val) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                input.value += ", " + val;
+            }
+        }
+    }
+
+    // Розгортання/згортання блоків заключення та перерахунок видимості
+    function toggleSection(sectionId, checkbox) {
+        var section = document.getElementById(sectionId);
+        if (checkbox.checked) {
+            section.classList.add('expanded');
+        } else {
+            section.classList.remove('expanded');
+        }
+        refreshConclusionVisibility();
+    }
+
+    // Головна функція, яка робить вибрані діагнози видимими
+    function refreshConclusionVisibility() {
+        var items = document.querySelectorAll('.conclusion-item');
+        for (var i = 0; i < items.length; i++) {
+            var cb = items[i].querySelector('input[type="checkbox"]');
+            var parent = items[i].closest('.sub-conclusion');
+            if (!parent) continue;
+            
+            var isChecked = cb && cb.checked;
+            
+            if (isChecked) {
+                items[i].style.fontWeight = 'bold';
+            } else {
+                items[i].style.fontWeight = 'normal';
+            }
+            
+            if (parent.classList.contains('expanded')) {
+                items[i].style.display = 'block';
+            } else {
+                if (isChecked) {
+                    items[i].style.display = 'block';
+                } else {
+                    items[i].style.display = 'none';
+                }
+            }
+        }
+    }
+
+    function toggleDiagInput() {
+        var sel = document.getElementById("diag-select");
+        var noneText = document.getElementById("diag-none-text");
+        var doneWrap = document.getElementById("diag-done-wrap");
+        
+        if (sel.value === "done") {
+            noneText.style.display = "none";
+            doneWrap.style.display = "inline-flex";
+        } else {
+            noneText.style.display = "inline-block";
+            doneWrap.style.display = "none";
+        }
+    }
+
+    window.addEventListener('beforeprint', function() {
+        var items = document.querySelectorAll('.conclusion-item');
+        for (var i = 0; i < items.length; i++) {
+            var cb = items[i].querySelector('input[type="checkbox"]');
+            if (cb && !cb.checked) {
+                items[i].style.display = 'none';
+            }
+            items[i].style.fontWeight = 'normal'; 
+        }
+        
+        var diagItems = document.querySelectorAll('.diag-item');
+        for (var j = 0; j < diagItems.length; j++) {
+            var diagCb = diagItems[j].querySelector('input[type="checkbox"]');
+            if (diagCb && !diagCb.checked) {
+                diagItems[j].style.display = 'none';
+            }
+        }
+        
+        var cbs = document.querySelectorAll('input[type="checkbox"]');
+        for (var k = 0; k < cbs.length; k++) {
+            cbs[k].style.display = 'none';
+        }
+        
+        var biopsyQty = document.getElementById('biopsy-qty');
+        var biopsyLoc = document.getElementById('biopsy-loc');
+        if (biopsyQty && biopsyLoc && biopsyQty.value === '' && biopsyLoc.value === '') {
+             var wrap = document.getElementById('biopsy-inputs');
+             if(wrap) wrap.style.display = 'none';
+        }
+    });
+
+    window.addEventListener('afterprint', function() {
+        var cbs = document.querySelectorAll('input[type="checkbox"]');
+        for (var k = 0; k < cbs.length; k++) {
+            cbs[k].style.display = '';
+        }
+        var diagItems = document.querySelectorAll('.diag-item');
+        for (var j = 0; j < diagItems.length; j++) {
+            diagItems[j].style.display = '';
+        }
+        var wrap = document.getElementById('biopsy-inputs');
+        if(wrap && document.querySelector('.diag-item input[type="checkbox"]').checked) {
+             wrap.style.display = 'inline';
+        }
+        refreshConclusionVisibility(); // Повертаємо видимість та жирний шрифт
+    });
+
+    function toggleSedationDetails() {
+        var select = document.getElementById("anesthesia-select");
+        var details = document.getElementById("sedation-details");
+        details.style.display = (select.value === "sedation") ? "block" : "none";
+    }
+
+    function toggleReferralInput() {
+        var select = document.getElementById("referral-select");
+        var customInput = document.getElementById("custom-referral");
+        if (select.value === "custom") {
+            customInput.style.display = "inline-block";
+            customInput.focus();
+            select.classList.add("print-hidden");
+        } else {
+            customInput.style.display = "none";
+            customInput.value = "";
+            select.classList.remove("print-hidden");
+        }
+    }
+
+    function toggleManipInput(selectId, inputId) {
+        var sel = document.getElementById(selectId);
+        var inp = document.getElementById(inputId);
+        if (sel.value === "done") {
+            inp.value = "";
+            inp.placeholder = "Впишіть опис...";
+            inp.focus();
+        } else {
+            inp.value = "не проводились";
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<style type="text/css">
+    body { margin: 0; padding: 5px 10px; font-family: "Times New Roman", serif; font-size: 11pt; line-height: 1.15; }
+    .container { max-width: 950px; margin: 0 auto; }
+    .tnr { font-family: "Times New Roman", serif; }
+    .title-large { font: bold 13pt "Times New Roman", serif; }
+    .section-title { text-decoration: underline; font: bold 11.5pt "Times New Roman", serif; display: inline-block; margin-top: 2px; margin-bottom: 2px; }
+    .row { margin-bottom: 2px; }
+    .label { padding-right: 5px; font-weight: bold; font-size: 11pt; }
+    
+    input[type="text"], input[type="date"] { font-family: "Times New Roman", serif; font-size: 10.5pt; padding: 1px 3px; border: 1px solid #ccc; border-radius: 3px; }
+    select { font-family: "Times New Roman", serif; font-size: 10.5pt; padding: 1px 3px; border: 1px solid #aaa; border-radius: 3px; background-color: #f9f9f9; cursor: pointer; }
+    
+    /* Мульти-вибір */
+    .dd { position: relative; display: inline-block; cursor: pointer; margin-left: 2px; }
+    .dd-btn { border: 1px solid #aaa; background: #f9f9f9; padding: 1px 4px; border-radius: 3px; font-size: 9pt; display: inline-block; user-select: none; }
+    .dd-content { display: none; position: absolute; left: 0; top: 100%; background-color: #fff; box-shadow: 0px 4px 8px rgba(0,0,0,0.2); z-index: 10; border: 1px solid #ccc; min-width: 220px; max-height: 250px; overflow-y: auto; user-select: none; }
+    .dd-content div { padding: 4px 8px; font-size: 10.5pt; color: #333; transition: background 0.1s; }
+    .dd-content div:hover { background-color: #d0e8ff; }
+    
+    /* Блок заключення */
+    .conclusion-box { margin-top: 2px; margin-bottom: 4px; border: 1px solid #ccc; padding: 6px; border-radius: 3px; background: #fff; }
+    .sub-conclusion { margin-left: 15px; -webkit-columns: 2; -moz-columns: 2; columns: 2; gap: 10px; }
+    
+    .main-section-label { display: block; margin-bottom: 2px; font-size: 10.5pt; cursor: pointer; font-weight: bold; color: #333; }
+    .main-section-label input[type="checkbox"] { margin-right: 5px; vertical-align: middle; }
+    
+    .conclusion-item { display: none; break-inside: avoid; margin-bottom: 1px; font-size: 10pt; }
+    .conclusion-item label { display: inline-block; cursor: pointer; margin-right: 3px; }
+    .conclusion-item input[type="checkbox"] { margin-right: 5px; vertical-align: middle; }
+    
+    .diag-item { font-size: 10.5pt; display: inline-flex; align-items: center; margin-right: 15px; break-inside: avoid; }
+    .diag-item label { display: inline-flex; align-items: center; cursor: pointer; }
+    .diag-item input[type="checkbox"] { margin-right: 5px; }
+    
+    .inline-text { border: none; border-bottom: 1px solid #000; background: transparent; outline: none; font-family: "Times New Roman", serif; font-size: 10pt; margin-left: 2px; padding: 0 2px; border-radius: 0; }
+    .inline-select { border: none; border-bottom: 1px solid #000; background: transparent; outline: none; font-family: "Times New Roman", serif; font-size: 10pt; margin-left: 2px; padding: 0; border-radius: 0; cursor: pointer; }
+    
+    .separator { height: 2px; width: 100%; break-inside: avoid; }
+    .print-hidden { display: none !important; }
+
+    /* Кнопка друку */
+    .print-btn { padding: 8px 20px; font-size: 12pt; font-weight: bold; cursor: pointer; background: #0056b3; color: white; border: none; border-radius: 5px; display: inline-block; margin-top: 20px; }
+    .print-btn:hover { background: #004494; }
+
+    /* Налаштування для друку в 1 сторінку */
+    @media print {
+        @page { size: A4; margin: 0.5cm; }
+        body { padding: 0; font-size: 9.5pt; line-height: 1.05; }
+        .container { max-width: 100%; width: 100%; }
+        input[type="text"], select { border: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: transparent !important; margin: 0 !important; padding: 0 !important; height: auto !important; }
+        
+        .noprint { display: none !important; }
+        
+        /* ЗБЕРЕЖЕНА РАМКА ДЛЯ ЗАКЛЮЧЕННЯ ПРИ ДРУЦІ */
+        .conclusion-box { border: 1px solid #000 !important; padding: 5px !important; margin-bottom: 4px !important; background: transparent !important; }
+        
+        .sub-conclusion { display: block !important; margin: 0 !important; padding: 0 !important; -webkit-columns: 2 !important; -moz-columns: 2 !important; columns: 2 !important; gap: 5px !important; }
+        .separator { display: none !important; height: 0 !important; margin: 0 !important; }
+        .conclusion-item { margin-bottom: 0 !important; }
+        .main-section-label { display: none !important; }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 2px;">
+        <tr>
+            <td width="48%"></td>
+            <td width="52%" align="left" style="font-size: 9.5pt; line-height: 1.1;">
+                <b>ФОП Ткачук Роман Васильович. Ендоскопічний кабінет</b><br>
+                Черкаська обл., Уманський р-н, Паланська ТГ, комплекс «Білогрудівка», вул. Білогрудівська, 2<br>
+                Тел.: 067-506-89-62, код ЄДРПОУ: 2868606514<br>
+                Ліцензія МОЗ України згідно наказу від 04.04.2025 № 585
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center" style="padding: 4px 0;"><span class="tnr" style="font-weight: bold; font-size: 12pt;">ЕНДОСКОПІЧНИЙ КАБІНЕТ</span></td>
+        </tr>
+    </table>
+
+    <div class="row">
+        <span class="label" style="font-size: 12pt;">ПІБ:</span> 
+        <input type="text" style="width: 380px; font-size: 12pt; font-weight: bold;" value=""> 
+        <span class="label" style="padding-left: 10px;">Вік:</span> <input type="text" style="width: 45px;" value="">
+    </div>
+    <div class="row">
+        <span class="label">Амбулаторна МК №:</span> <input type="text" style="width: 100px;" value="">
+        <span class="label" style="padding-left: 10px;">Ким направлений:</span> 
+        <select class="noprint" id="referral-select" onchange="toggleReferralInput()">
+            <option>Сімейний лікар</option>
+            <option>Самозвернення</option>
+            <option value="custom">інший лікар (вписати)</option>
+        </select>
+        <input type="text" id="custom-referral" placeholder="ПІБ лікаря..." style="width: 200px; display: none; margin-left: 5px;">
+    </div>
+    <div class="row">
+        <span class="label">Адреса проживання:</span> <input type="text" style="width: 580px;" value="">
+    </div>
+    
+    <div class="row" style="margin-top: 2px;">
+        <span class="label">Апарат:</span> <input type="text" style="width: 230px;" value="Olympus Evis Lucera GIF-H260">
+        <span class="label" style="padding-left: 10px;">Процесор:</span> <input type="text" style="width: 230px;" value="Olympus Evis Lucera CV-260 SL">
+    </div>
+    <div class="row">
+        <span class="label">Обробка апарату:</span> <input type="text" style="width: 250px;" value="террацид преміум 10 хвилин">
+        <span class="label" style="padding-left: 10px;">Знеболення:</span> 
+        <select id="anesthesia-select" onchange="toggleSedationDetails()">
+            <option selected>ні</option>
+            <option>Лідокаїн 10% спрей</option>
+            <option value="sedation">в/в седація</option>
+        </select>
+    </div>
+    
+    <div id="sedation-details" style="display: none; margin-left: 10px; font-size: 9.5pt; line-height: 1.1; margin-bottom: 2px;">
+        <div><b>Знеболення:</b> внутрішньовенна анестезія 1% розчином Пропофолу.</div>
+        <div><b>Моніторинг:</b> контроль АТ, PS, SpO2 + трансназальна інсуфляція O2. <b>Анестезіолог:</b> <input type="text" class="inline-text" style="width: 120px;" value="Чорногуз"></div>
+    </div>
+
+    <div class="row" style="margin-bottom: 2px;">
+        <label style="font-family: 'Times New Roman', serif; font-size: 10.5pt; cursor: pointer;">
+            <input type="checkbox" checked style="margin-right: 5px; vertical-align: middle;">
+            Інформаційна згода на виконання обстеження отримана до обстеження.
+        </label>
+    </div>
+
+    <div class="row" style="padding-top: 2px; padding-bottom: 2px; text-align: center;">
+        <span class="title-large">ЕЗОФАГОГАСТРОДУОДЕНОСКОПІЯ №</span> 
+        <input type="text" style="width: 70px; font-weight: bold; font-size: 12pt; text-align: center;">
+    </div>
+
+    <!-- СТРАВОХІД -->
+    <div class="row"><span class="section-title">СТРАВОХІД</span></div>
+    <div class="row">
+        <span class="label">Просвіт:</span> 
+        <input type="text" id="es-lumen" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="es-lumen">
+            <option>нормальний</option>
+            <option>розширений</option>
+            <option>спазмований</option>
+            <option>стенозований</option>
+            <option>деформований</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Пролапс:</span> 
+        <input type="text" id="es-prolaps" value="" style="width: 70px;">
+        <select class="noprint helper-select" data-target="es-prolaps">
+            <option>немає</option>
+            <option>є</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Сфінктери:</span> 
+        <input type="text" id="es-sfincter" value="" style="width: 100px;">
+        <select class="noprint helper-select" data-target="es-sfincter">
+            <option>змінені</option>
+            <option>не змінені</option>
+        </select>
+    </div>
+    <div class="row">
+        <span class="label">Верхній:</span> 
+        <input type="text" id="es-upper" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="es-upper">
+            <option>змикається</option>
+            <option>не змикається</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Нижній:</span> 
+        <input type="text" id="es-lower" value="" style="width: 150px;">
+        <select class="noprint helper-select" data-target="es-lower">
+            <option>змикається частково</option>
+            <option>змикається повністю</option>
+            <option>не змикається</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Перистальтика:</span> 
+        <input type="text" id="es-peristaltica" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="es-peristaltica">
+            <option>нормальна</option>
+            <option>послаблена</option>
+            <option>ретроградна</option>
+        </select>
+    </div>
+    <div class="row">
+        <span class="label">Слизова:</span> 
+        <input type="text" id="es-mucosa" value="" style="width: 250px;">
+        <select class="noprint helper-select" data-target="es-mucosa">
+            <option>нормальна</option>
+            <option>гіперемована</option>
+            <option>ерозована</option>
+            <option>бліда</option>
+            <option>матова</option>
+            <option>застійна</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Кардіальна складка за Hill:</span> 
+        <input type="text" id="es-hill" value="" style="width: 60px;">
+        <select class="noprint helper-select" data-target="es-hill">
+            <option>І ст.</option>
+            <option>ІІ ст.</option>
+            <option>ІІІ ст.</option>
+            <option>IV ст.</option>
+        </select>
+    </div>
+    
+    <div class="row">
+        <span class="label">Ураження:</span> 
+        <input type="text" id="es-lesion-custom" value="" style="width: 580px;">
+        <select class="noprint helper-select" data-target="es-lesion-custom">
+            <option>в н/3 стравоходу визначаються лінійні ерозії 2х6 мм</option>
+            <option>в н/3 стравоходу визначаються ерозії 2-3 мм</option>
+            <option>в н/3 стравоходу визначаються ерозії 3-5 мм</option>
+            <option>у н/3 стравоходу білі включення розмірами 2 мм, із запаленням</option>
+            <option>у н/3 стравоходу білі включення розмірами 2 мм, без запалення</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <span class="label">З'єднання (см):</span> <input type="text" style="width: 40px;" value="">
+        <span class="label" style="padding-left: 10px;">Z-лінія (см):</span> <input type="text" style="width: 40px;" value="">
+        
+        <input type="text" id="es-zline" placeholder="стан Z-лінії" style="width: 100px; margin-left: 10px;">
+        <select class="noprint helper-select" data-target="es-zline">
+            <option>збережена</option>
+            <option>зміщена</option>
+            <option>не чітка</option>
+        </select>
+
+        <input type="text" id="es-zshape" placeholder="форма Z-лінії" style="width: 100px;">
+        <select class="noprint helper-select" data-target="es-zshape">
+            <option>округла</option>
+            <option>зубчаста</option>
+        </select>
+    </div>
+
+    <!-- ШЛУНОК -->
+    <div class="row" style="padding-top: 2px;">
+        <span class="section-title">ШЛУНОК</span> 
+        <input type="text" id="st-op" value="" style="width: 150px; margin-left: 5px;" placeholder="статус...">
+        <select class="noprint helper-select" data-target="st-op">
+            <option>неоперований</option>
+            <option>оперований по Б-І</option>
+            <option>оперований по Б-ІІ</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Просвіт:</span> 
+        <input type="text" id="st-lumen" value="" style="width: 150px;">
+        <select class="noprint helper-select" data-target="st-lumen">
+            <option>нормальний</option>
+            <option>деформований</option>
+            <option>збільшений в розмірах</option>
+            <option>зменшений в розмірах</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Вміст:</span> 
+        <input type="text" id="st-content" value="" style="width: 150px;">
+        <select class="noprint helper-select" data-target="st-content">
+            <option>слина</option>
+            <option>шлунковий сік</option>
+            <option>шлунковий сік із жовчю</option>
+            <option>мутна рідина</option>
+            <option>рештки неперетравленої їжі</option>
+            <option>вміст по типу "кавової гущі"</option>
+        </select>
+    </div>
+    <div class="row">
+        <span class="label">Стінка:</span> 
+        <input type="text" id="st-wall" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="st-wall">
+            <option>нормальна</option>
+            <option>потовщена</option>
+            <option>ригідна</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Перистальтика:</span> 
+        <input type="text" id="st-peristaltica" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="st-peristaltica">
+            <option>нормальна</option>
+            <option>послаблена</option>
+            <option>посилена</option>
+            <option>ретроградна</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Воротар:</span> 
+        <input type="text" id="st-pylorus" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="st-pylorus">
+            <option>зімкнутий</option>
+            <option>розкритий</option>
+            <option>спазмований</option>
+            <option>стенозований</option>
+            <option>деформований</option>
+        </select>
+    </div>
+    <div class="row">
+        <span class="label">Слизова тіла:</span> 
+        <input type="text" id="st-mucosabody" value="" style="width: 250px;">
+        <select class="noprint helper-select" data-target="st-mucosabody">
+            <option>нормальна</option>
+            <option>гіперемована</option>
+            <option>ерозована (поодинокі 2-3 мм)</option>
+            <option>ерозована (множинні 2-3 мм)</option>
+            <option>ерозована (поодинокі 3-5 мм)</option>
+            <option>ерозована (множинні 3-5 мм)</option>
+            <option>бліда</option>
+            <option>застійна</option>
+            <option>пістрява</option>
+            <option>дрібно-зерниста</option>
+            <option>атрофічна</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">антруму:</span> 
+        <input type="text" id="st-mucosaantrum" value="" style="width: 250px;">
+        <select class="noprint helper-select" data-target="st-mucosaantrum">
+            <option>нормальна</option>
+            <option>гіперемована</option>
+            <option>ерозована (поодинокі 2-3 мм)</option>
+            <option>ерозована (множинні 2-3 мм)</option>
+            <option>ерозована (поодинокі 3-5 мм)</option>
+            <option>ерозована (множинні 3-5 мм)</option>
+            <option>бліда</option>
+            <option>застійна</option>
+            <option>пістрява</option>
+            <option>дрібно-зерниста</option>
+            <option>атрофічна</option>
+        </select>
+    </div>
+    <div class="row">
+        <span class="label">Складки:</span> 
+        <input type="text" id="st-folds" value="" style="width: 150px;">
+        <select class="noprint helper-select" data-target="st-folds">
+            <option>нормальні</option>
+            <option>потовщені</option>
+            <option>згладжені</option>
+            <option>атрофічні</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Рефлюкс жовчі:</span> 
+        <input type="text" id="st-reflux" value="" style="width: 60px;">
+        <select class="noprint helper-select" data-target="st-reflux">
+            <option>ні</option>
+            <option>так</option>
+        </select>
+    </div>
+    <div class="row"><span class="label">Ураження:</span> <input type="text" style="width: 580px;" value=""></div>
+
+    <!-- ДВАНАДЦЯТИПАЛА КИШКА -->
+    <div class="row" style="padding-top: 2px;"><span class="section-title">ДВАНАДЦЯТИПАЛА КИШКА</span></div>
+    <div class="row">
+        <span class="label">Просвіт:</span> 
+        <input type="text" id="du-lumen" value="" style="width: 200px;">
+        <select class="noprint helper-select" data-target="du-lumen">
+            <option>нормальний</option>
+            <option>деформований</option>
+            <option>прохідний для ендоскопа із зусиллям</option>
+            <option>прохідний для ендоскопа без зусилля</option>
+            <option>роздувається повітрям добре</option>
+            <option>роздувається повітрям погано</option>
+            <option>здавлений ззовні</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Вміст:</span> 
+        <input type="text" id="du-content" value="" style="width: 100px;">
+        <select class="noprint helper-select" data-target="du-content">
+            <option>слиз</option>
+            <option>жовч</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Стінка:</span> 
+        <input type="text" id="du-wall" value="" style="width: 100px;">
+        <select class="noprint helper-select" data-target="du-wall">
+            <option>нормальна</option>
+            <option>потовщена</option>
+            <option>ригідна</option>
+        </select>
+    </div>
+    <div class="row">
+        <span class="label">Перистальтика:</span> 
+        <input type="text" id="du-peristaltica" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="du-peristaltica">
+            <option>нормальна</option>
+            <option>послаблена</option>
+            <option>відсутня</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Pap. Fateri:</span> 
+        <input type="text" id="du-papilla" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="du-papilla">
+            <option>округлої форми</option>
+            <option>збільшений</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Відтік жовчі:</span> 
+        <input type="text" id="du-bile" value="" style="width: 100px;">
+        <select class="noprint helper-select" data-target="du-bile">
+            <option>не порушений</option>
+            <option>порушений</option>
+        </select>
+    </div>
+    <div class="row">
+        <span class="label">Слизова цибулини ДПК:</span> 
+        <input type="text" id="du-bulb" value="" style="width: 250px;">
+        <select class="noprint helper-select" data-target="du-bulb">
+            <option>нормальна</option>
+            <option>гіперемована</option>
+            <option>ерозована (поодинокі 2-3 мм)</option>
+            <option>ерозована (множинні 2-3 мм)</option>
+            <option>ерозована (поодинокі 3-5 мм)</option>
+            <option>ерозована (множинні 3-5 мм)</option>
+            <option>бліда</option>
+            <option>застійна</option>
+            <option>набрякла</option>
+            <option>зерниста</option>
+            <option>по типу "манної крупи"</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Забульбарний відділ:</span> 
+        <input type="text" id="du-postbulb" value="" style="width: 250px;">
+        <select class="noprint helper-select" data-target="du-postbulb">
+            <option>нормальна</option>
+            <option>гіперемована</option>
+            <option>ерозована (поодинокі 2-3 мм)</option>
+            <option>ерозована (множинні 2-3 мм)</option>
+            <option>ерозована (поодинокі 3-5 мм)</option>
+            <option>ерозована (множинні 3-5 мм)</option>
+            <option>бліда</option>
+            <option>застійна</option>
+            <option>набрякла</option>
+            <option>зерниста</option>
+            <option>по типу "манної крупи"</option>
+        </select>
+    </div>
+
+    <!-- КРОВОТЕЧА -->
+    <div class="row" style="padding-top: 2px;"><span class="section-title">КРОВОТЕЧА</span></div>
+    <div class="row">
+        <select id="bleeding-status" class="noprint" onchange="toggleBleeding()" style="margin-right: 5px;">
+            <option value="none" selected>немає</option>
+            <option value="active">активна (триває)</option>
+            <option value="stopped">зупинена</option>
+        </select>
+        
+        <input type="text" id="bleeding-print" value="немає" style="width: 350px;">
+
+        <span id="bl-active-wrap" style="display: none; margin-left: 5px;">
+            <select class="noprint" onchange="setBleedingText(this, 'активна, ')">
+                <option value="" disabled selected>-- тип --</option>
+                <option>струйна</option>
+                <option>підтікання з-під згустка</option>
+            </select>
+        </span>
+        
+        <span id="bl-stopped-wrap" style="display: none; margin-left: 5px;">
+            під <select class="noprint" onchange="setBleedingText(this, 'зупинена, під ')">
+                <option value="" disabled selected>-- тромб --</option>
+                <option>білим тромбом</option>
+                <option>чорним тромбом</option>
+            </select>
+        </span>
+    </div>
+
+    <!-- ДІАГНОСТИЧНІ МАНІПУЛЯЦІЇ -->
+    <div class="row" style="padding-top: 2px;"><span class="section-title">ДІАГНОСТИЧНІ МАНІПУЛЯЦІЇ</span></div>
+    <div class="row">
+        <select class="noprint" id="diag-select" onchange="toggleDiagInput()" style="margin-right: 5px;">
+            <option value="none" selected>не проводились</option>
+            <option value="done">проводились</option>
+        </select>
+        <span id="diag-none-text" style="font-size: 10.5pt;">не проводились</span>
+        
+        <span id="diag-done-wrap" style="display: none; align-items: center; flex-wrap: wrap;">
+            <span class="diag-item">
+                <label><input type="checkbox"> Хелікобактер пілорі:</label>
+                <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value" style="margin-left: 5px;">
+                    <option value=""></option>
+                    <option>позитивний</option>
+                    <option>негативний</option>
+                </select>
+                <input type="text" class="inline-text" style="width: 80px; margin-left: 5px;">
+            </span>
+            <span class="diag-item">
+                <label><input type="checkbox"> цитологічний мазок на Хелікобактер пілорі</label>
+            </span>
+            <span class="diag-item">
+                <label>
+                    <input type="checkbox" onchange="document.getElementById('biopsy-inputs').style.display = this.checked ? 'inline' : 'none';"> біопсія
+                </label>
+                <span id="biopsy-inputs" style="display: none; margin-left: 2px;">
+                    взято <input type="text" id="biopsy-qty" class="inline-text" style="width: 25px; text-align: center;"> шматочків з <input type="text" id="biopsy-loc" class="inline-text" style="width: 150px;">
+                </span>
+            </span>
+        </span>
+    </div>
+
+    <!-- ЛІКУВАЛЬНІ МАНІПУЛЯЦІЇ -->
+    <div class="row" style="padding-top: 2px;"><span class="section-title">ЛІКУВАЛЬНІ МАНІПУЛЯЦІЇ</span></div>
+    <div class="row">
+        <select class="noprint" id="treat-select" onchange="toggleManipInput('treat-select', 'treat-input')" style="margin-right: 5px;">
+            <option value="none" selected>не проводились</option>
+            <option value="done">проводились</option>
+        </select>
+        <input type="text" id="treat-input" value="не проводились" style="width: 500px;">
+    </div>
+
+    <!-- ЗАКЛЮЧЕННЯ -->
+    <div class="row" style="padding-top: 4px;">
+        <span class="section-title" style="font-size: 13pt;">ЗАКЛЮЧЕННЯ:</span>
+    </div>
+    <div class="conclusion-box">
+        <!-- 1. СТРАВОХІД -->
+        <div>
+            <label class="main-section-label">
+                <input type="checkbox" onchange="toggleSection('block-esophagus', this)"> 1. СТРАВОХІД (розгорнути список)
+            </label>
+            <div id="block-esophagus" class="sub-conclusion">
+                <div class="conclusion-item"><label><input type="checkbox"> Патології не виявлено</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Кандидозний езофагіт:</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>І ст.</option><option>ІІ ст.</option><option>ІІІ ст.</option><option>IV ст.</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 100px;">
+                </div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Варикозне розширення вен:</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>І ст.</option><option>ІІ ст.</option><option>ІІІ ст.</option><option>IV ст.</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 100px;">
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Кровотеча з ВРВ стравоходу</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Стороннє тіло стравоходу</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Синдром Меллорі-Вейса</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Рефлюкс-езофагіт</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Ерозивний езофагіт:</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>ст. 'A' за LA</option><option>ст. 'B' за LA</option><option>ст. 'C' за LA</option><option>ст. 'D' за LA</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 100px;">
+                </div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Кила стравохідного отвору діафрагми (за GRADE):</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>І ст.</option><option>ІІ ст.</option><option>ІІІ ст.</option><option>IV ст.</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 100px;">
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Пролапс кардії в стравохід</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Недостатність кардії</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Дивертикул стравоходу</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Стеноз стравоходу</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Ахалазія кардії</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Cr стравоходу</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Виразка стравоходу</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Поліп стравоходу</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Інше (дописати):</label> <input type="text" class="inline-text" style="width: 250px;"></div>
+            </div>
+        </div>
+
+        <div class="separator"></div>
+
+        <!-- 2. ШЛУНОК -->
+        <div>
+            <label class="main-section-label">
+                <input type="checkbox" onchange="toggleSection('block-stomach', this)"> 2. ШЛУНОК (розгорнути список)
+            </label>
+            <div id="block-stomach" class="sub-conclusion">
+                <div class="conclusion-item"><label><input type="checkbox"> Патології не виявлено</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Оперований шлунок</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Гастропатія:</label> 
+                    <input type="text" id="concl-gastropathy" class="inline-text" style="width: 150px;">
+                    <select class="noprint helper-select" data-target="concl-gastropathy">
+                        <option>еритематозна</option>
+                        <option>ерозивна</option>
+                        <option>помірна</option>
+                        <option>гіпертрофічна</option>
+                        <option>з лімфоїдною гіперплазією</option>
+                    </select>
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Атрофія слизової оболонки шлунка</label> <input type="text" class="inline-text" style="width: 120px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Стороннє тіло шлунка</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Виразка</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>антрального відділу</option><option>тіла</option><option>кардіального відділу</option><option>субкардіального відділу</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 130px;" placeholder="відділ..."> шлунка
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Дуоденогастральний рефлюкс</label> <input type="text" class="inline-text" style="width: 120px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Аберантна підшлункова залоза</label> <input type="text" class="inline-text" style="width: 120px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Susp. cancer ventriculi</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> НПЗП-асоційована виразка шлунка</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Пептична виразка анастомозу</label> <input type="text" class="inline-text" style="width: 120px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Ангіоектазії</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Виразка Делафуа</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Варикозне розширення вен шлунка</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Кровотеча з виразки за Forrest:</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>1а</option><option>1в</option><option>1с</option><option>1х</option><option>2а</option><option>2в</option><option>2с</option><option>3</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 40px;">
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Хронічна гастропатія</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Поліп</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>антрального відділу</option><option>тіла</option><option>кардіального відділу</option><option>субкардіального відділу</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 130px;" placeholder="відділ..."> шлунка
+                </div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Ксантома</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>антрального відділу</option><option>тіла</option><option>кардіального відділу</option><option>субкардіального відділу</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 130px;" placeholder="відділ..."> шлунка
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Cr. шлунку. Prolongatio morbid</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Інше (дописати):</label> <input type="text" class="inline-text" style="width: 250px;"></div>
+            </div>
+        </div>
+
+        <div class="separator"></div>
+
+        <!-- 3. ДВАНАДЦЯТИПАЛА КИШКА -->
+        <div>
+            <label class="main-section-label">
+                <input type="checkbox" onchange="toggleSection('block-duodenum', this)"> 3. ДВАНАДЦЯТИПАЛА КИШКА (розгорнути список)
+            </label>
+            <div id="block-duodenum" class="sub-conclusion">
+                <div class="conclusion-item"><label><input type="checkbox"> Патології не виявлено</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Хронічна гастродуоденопатія</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Стеноз пілоричного відділу</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Виразка цибулини ДПК</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Дуоденопатія:</label> 
+                    <input type="text" id="concl-duodenopathy" class="inline-text" style="width: 150px;">
+                    <select class="noprint helper-select" data-target="concl-duodenopathy">
+                        <option>еритематозна</option>
+                        <option>ерозивна</option>
+                        <option>помірна</option>
+                        <option>гіпертрофічна</option>
+                        <option>з лімфоїдною гіперплазією</option>
+                    </select>
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Деформація цибулини ДПК</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item">
+                    <label><input type="checkbox"> Кровотеча з виразки ДПК за Forrest:</label> 
+                    <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                        <option value=""></option><option>1а</option><option>1в</option><option>1с</option><option>1х</option><option>2а</option><option>2в</option><option>2с</option><option>3</option>
+                    </select>
+                    <input type="text" class="inline-text" style="width: 40px;">
+                </div>
+                <div class="conclusion-item"><label><input type="checkbox"> Ферментативна дуоденопатія</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Дивертикул цибулини ДПК</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Дивертикул постбульбарного відділу ДПК</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Виразка постбульбарного відділу ДПК</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+                <div class="conclusion-item"><label><input type="checkbox"> Інше (дописати):</label> <input type="text" class="inline-text" style="width: 250px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- РЕКОМЕНДАЦІЇ -->
+    <div class="row" style="padding-top: 2px;"><span class="section-title">РЕКОМЕНДАЦІЇ:</span></div>
+    <div class="conclusion-box" style="margin-bottom: 2px;">
+        <label class="main-section-label">
+            <input type="checkbox" onchange="toggleSection('block-rec', this)"> (розгорнути рекомендації)
+        </label>
+        <div id="block-rec" class="sub-conclusion">
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація сімейного лікаря</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація хірурга</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація терапевта</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація анестезіолога</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація в ЧООД</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Консультація:</label> <input type="text" class="inline-text" placeholder="впишіть лікаря..." style="width: 150px;"></div>
+            <div class="conclusion-item">
+                <label><input type="checkbox"> Повторний огляд через:</label> 
+                <input type="text" class="inline-text" style="width: 40px; text-align: center;"> 
+                <select class="inline-select noprint" onchange="this.nextElementSibling.value = this.value">
+                    <option>годин</option>
+                    <option>днів</option>
+                    <option>місяців</option>
+                </select>
+                <input type="text" class="inline-text" style="width: 80px;">
+            </div>
+            <div class="conclusion-item"><label><input type="checkbox"> Контрастна рентгенографія стравоходу, шлунка та ДПК</label> <input type="text" class="inline-text" style="width: 100px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> КТ ОГК + ОЧП</label> <input type="text" class="inline-text" style="width: 150px;"></div>
+            <div class="conclusion-item"><label><input type="checkbox"> Інше:</label> <input type="text" class="inline-text" placeholder="Своя рекомендація..." style="width: 350px;"></div>
+        </div>
+    </div>
+
+    <!-- ПІДПИСИ, ДАТА ТА КНОПКА -->
+    <div class="row" style="padding-top: 15px; display: flex; align-items: center; justify-content: space-between;">
+        <div style="width: 30%;">
+            <span class="label">Дата:</span> <input type="date" id="current-date" style="border:none; font-family:'Times New Roman',serif; font-size:10.5pt;">
+        </div>
+        
+        <!-- Кнопка друку по центру (зникає при друку) -->
+        <div class="noprint" style="width: 30%; text-align: center;">
+            <button type="button" class="print-btn" onclick="window.print()">🖨️ Друк / Зберегти в PDF</button>
+        </div>
+
+        <div style="width: 40%; text-align: right; padding-right: 20px;">
+            <span class="label">Лікар:</span> <select style="border:none; background:transparent; font-family:'Times New Roman',serif; font-size:10.5pt; font-weight:bold; outline:none; -webkit-appearance:none; appearance:none;"><option>Ткачук Р.В.</option></select>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Встановлення поточної дати
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+        document.getElementById('current-date').value = yyyy + '-' + mm + '-' + dd;
+        
+        // Створення випадаючих списків для опису
+        var selects = document.querySelectorAll("select.helper-select");
+        for (var i = 0; i < selects.length; i++) {
+            (function(sel) {
+                var dd = document.createElement("div");
+                dd.className = "dd noprint";
+                var targetId = sel.getAttribute("data-target");
+                
+                var btn = document.createElement("span");
+                btn.className = "dd-btn";
+                btn.innerHTML = "▼";
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var wasVisible = (content.style.display === "block");
+                    var allContents = document.querySelectorAll('.dd-content');
+                    for (var j = 0; j < allContents.length; j++) {
+                        allContents[j].style.display = 'none';
+                    }
+                    if (!wasVisible) content.style.display = "block";
+                };
+                dd.appendChild(btn);
+                
+                var content = document.createElement("div");
+                content.className = "dd-content";
+                
+                for (var k = 0; k < sel.options.length; k++) {
+                    (function(opt) {
+                        var item = document.createElement("div");
+                        item.innerHTML = opt.text;
+                        item.onclick = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            appendMultiTextId(targetId, opt.text);
+                        };
+                        content.appendChild(item);
+                    })(sel.options[k]);
+                }
+                
+                dd.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                };
+
+                dd.appendChild(content);
+                sel.parentNode.insertBefore(dd, sel);
+                sel.style.display = "none";
+            })(selects[i]);
+        }
+
+        document.addEventListener("click", function() {
+            var allContents = document.querySelectorAll('.dd-content');
+            for (var j = 0; j < allContents.length; j++) {
+                allContents[j].style.display = 'none';
+            }
+        });
+        
+        // Логіка для миттєвого відображення вибраних діагнозів у заключенні
+        var conclCheckboxes = document.querySelectorAll('.conclusion-item input[type="checkbox"]');
+        for (var c = 0; c < conclCheckboxes.length; c++) {
+            conclCheckboxes[c].addEventListener('change', refreshConclusionVisibility);
+        }
+        refreshConclusionVisibility();
+    });
+
+    // Логіка додавання значень з ▼
+    function appendMultiTextId(inputId, val) {
+        var input = document.getElementById(inputId);
+        if (!input) return;
+        var current = input.value.replace(/^\s+|\s+$/g, '');
+        var defaults = ["нормальний", "нормальна", "немає", "не змінені", "змикається", "збережена", "округла", "неоперований", "слиз", "слина", "прозорий слиз"];
+        
+        var isDefault = false;
+        for (var i = 0; i < defaults.length; i++) {
+            if (current === defaults[i]) {
+                isDefault = true;
+                break;
+            }
+        }
+        
+        if (current === "" || isDefault || val.indexOf("▼") !== -1) {
+            if (val.indexOf("▼") === -1) input.value = val;
+        } else {
+            var parts = current.split(",");
+            var exists = false;
+            for (var j = 0; j < parts.length; j++) {
+                if (parts[j].replace(/^\s+|\s+$/g, '') === val) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                input.value += ", " + val;
+            }
+        }
+    }
+
+    // Розгортання/згортання блоків заключення та перерахунок видимості
+    function toggleSection(sectionId, checkbox) {
+        var section = document.getElementById(sectionId);
+        if (checkbox.checked) {
+            section.classList.add('expanded');
+        } else {
+            section.classList.remove('expanded');
+        }
+        refreshConclusionVisibility();
+    }
+
+    // Головна функція, яка робить вибрані діагнози постійно видимими
+    function refreshConclusionVisibility() {
+        var items = document.querySelectorAll('.conclusion-item');
+        for (var i = 0; i < items.length; i++) {
+            var cb = items[i].querySelector('input[type="checkbox"]');
+            var parent = items[i].closest('.sub-conclusion');
+            if (!parent) continue;
+            
+            var isChecked = cb && cb.checked;
+            
+            // Якщо вибрано - виділяємо жирним
+            if (isChecked) {
+                items[i].style.fontWeight = 'bold';
+            } else {
+                items[i].style.fontWeight = 'normal';
+            }
+            
+            // Видимість
+            if (parent.classList.contains('expanded')) {
+                items[i].style.display = 'block';
+            } else {
+                if (isChecked) {
+                    items[i].style.display = 'block';
+                } else {
+                    items[i].style.display = 'none';
+                }
+            }
+        }
+    }
+
+    function toggleDiagInput() {
+        var sel = document.getElementById("diag-select");
+        var noneText = document.getElementById("diag-none-text");
+        var doneWrap = document.getElementById("diag-done-wrap");
+        
+        if (sel.value === "done") {
+            noneText.style.display = "none";
+            doneWrap.style.display = "inline-flex";
+        } else {
+            noneText.style.display = "inline-block";
+            doneWrap.style.display = "none";
+        }
+    }
+
+    window.addEventListener('beforeprint', function() {
+        // Приховуємо невідмічені діагнози (на випадок, якщо список розгорнуто)
+        var items = document.querySelectorAll('.conclusion-item');
+        for (var i = 0; i < items.length; i++) {
+            var cb = items[i].querySelector('input[type="checkbox"]');
+            if (cb && !cb.checked) {
+                items[i].style.display = 'none';
+            }
+            items[i].style.fontWeight = 'normal'; // Прибираємо жирний шрифт для гарного друку
+        }
+        
+        var diagItems = document.querySelectorAll('.diag-item');
+        for (var j = 0; j < diagItems.length; j++) {
+            var diagCb = diagItems[j].querySelector('input[type="checkbox"]');
+            if (diagCb && !diagCb.checked) {
+                diagItems[j].style.display = 'none';
+            }
+        }
+        
+        var cbs = document.querySelectorAll('input[type="checkbox"]');
+        for (var k = 0; k < cbs.length; k++) {
+            cbs[k].style.display = 'none';
+        }
+        
+        var biopsyQty = document.getElementById('biopsy-qty');
+        var biopsyLoc = document.getElementById('biopsy-loc');
+        if (biopsyQty && biopsyLoc && biopsyQty.value === '' && biopsyLoc.value === '') {
+             var wrap = document.getElementById('biopsy-inputs');
+             if(wrap) wrap.style.display = 'none';
+        }
+    });
+
+    window.addEventListener('afterprint', function() {
+        var cbs = document.querySelectorAll('input[type="checkbox"]');
+        for (var k = 0; k < cbs.length; k++) {
+            cbs[k].style.display = '';
+        }
+        var diagItems = document.querySelectorAll('.diag-item');
+        for (var j = 0; j < diagItems.length; j++) {
+            diagItems[j].style.display = '';
+        }
+        var wrap = document.getElementById('biopsy-inputs');
+        if(wrap && document.querySelector('.diag-item input[type="checkbox"]').checked) {
+             wrap.style.display = 'inline';
+        }
+        refreshConclusionVisibility(); // Повертаємо видимість та жирний шрифт
+    });
+
+    function toggleSedationDetails() {
+        var select = document.getElementById("anesthesia-select");
+        var details = document.getElementById("sedation-details");
+        details.style.display = (select.value === "sedation") ? "block" : "none";
+    }
+
+    function toggleReferralInput() {
+        var select = document.getElementById("referral-select");
+        var customInput = document.getElementById("custom-referral");
+        if (select.value === "custom") {
+            customInput.style.display = "inline-block";
+            customInput.focus();
+            select.classList.add("print-hidden");
+        } else {
+            customInput.style.display = "none";
+            customInput.value = "";
+            select.classList.remove("print-hidden");
+        }
+    }
+
+    function toggleBleeding() {
+        var main = document.getElementById("bleeding-status");
+        var printInput = document.getElementById("bleeding-print");
+        document.getElementById("bl-active-wrap").style.display = "none";
+        document.getElementById("bl-stopped-wrap").style.display = "none";
+        
+        if (main.value === "none") {
+            printInput.value = "немає";
+        } else if (main.value === "active") {
+            document.getElementById("bl-active-wrap").style.display = "inline-block";
+            printInput.value = "активна";
+        } else if (main.value === "stopped") {
+            document.getElementById("bl-stopped-wrap").style.display = "inline-block";
+            printInput.value = "зупинена";
+        }
+    }
+
+    function setBleedingText(sel, prefix) {
+        if (!sel.value) return;
+        var printInput = document.getElementById("bleeding-print");
+        printInput.value = prefix + sel.value;
+    }
+
+    function toggleManipInput(selectId, inputId) {
+        var sel = document.getElementById(selectId);
+        var inp = document.getElementById(inputId);
+        if (sel.value === "done") {
+            inp.value = "";
+            inp.placeholder = "Впишіть опис...";
+            inp.focus();
+        } else {
+            inp.value = "не проводились";
+        }
+    }
+</script>
+</body>
+</html>
