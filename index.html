@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Робочий кабінет лікаря</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f4f8; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .panel { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; max-width: 500px; width: 100%; }
+        h1 { color: #2c3e50; font-size: 22px; margin-bottom: 5px; }
+        p { color: #7f8c8d; margin-bottom: 30px; }
+        .btn { display: block; width: 100%; padding: 15px; margin-bottom: 15px; background-color: #2980b9; color: white; text-decoration: none; font-size: 18px; font-weight: bold; border-radius: 8px; transition: background 0.3s; box-sizing: border-box; }
+        .btn:hover { background-color: #1c5980; }
+        .btn.colon { background-color: #27ae60; }
+        .btn.colon:hover { background-color: #1e8449; }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h1>Панель лікаря</h1>
+        <p>Генерація ендоскопічних протоколів</p>
+        
+        <a href="egds.html" class="btn">📄 Протокол ЕГДС</a>
+        <a href="colonoscopy.html" class="btn colon">📄 Протокол Колоноскопії</a>
+    </div>
+</body>
+</html>
