@@ -22,7 +22,7 @@
     .dd-content div:hover { background-color: #d0e8ff; }
     
     /* Блок заключення */
-    .conclusion-box { margin-top: 2px; margin-bottom: 4px; border: 1px solid #ccc; padding: 6px; border-radius: 3px; background: #fff; }
+    .conclusion-box { margin-top: 4px; margin-bottom: 4px; border: 1px solid #ccc; padding: 6px; border-radius: 3px; background: #fff; }
     .sub-conclusion { margin-left: 15px; -webkit-columns: 2; -moz-columns: 2; columns: 2; gap: 10px; }
     
     .main-section-label { display: block; margin-bottom: 2px; font-size: 10.5pt; cursor: pointer; font-weight: bold; color: #333; }
@@ -78,7 +78,10 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2" align="center" style="padding: 4px 0;"><span class="tnr" style="font-weight: bold; font-size: 12pt;">ЕНДОСКОПІЧНИЙ КАБІНЕТ</span></td>
+            <td colspan="2" align="center" style="padding: 15px 0 5px 0;">
+                <!-- Ендоскопічний кабінет - відступи, 16pt, жирний, підкреслений -->
+                <span class="tnr" style="font-weight: bold; font-size: 16pt; text-decoration: underline;">ЕНДОСКОПІЧНИЙ КАБІНЕТ</span>
+            </td>
         </tr>
     </table>
 
@@ -89,13 +92,16 @@
     </div>
     <div class="row">
         <span class="label">Амбулаторна МК №:</span> <input type="text" style="width: 100px;" value="">
+        
+        <!-- КИМ НАПРАВЛЕНИЙ (Виправлений список) -->
         <span class="label" style="padding-left: 10px;">Ким направлений:</span> 
-        <select class="noprint" id="referral-select" onchange="toggleReferralInput()">
+        <input type="text" id="referral-input" value="" style="width: 250px;">
+        <select class="noprint helper-select" data-target="referral-input">
+            <option value="" disabled selected>▼</option>
             <option>Сімейний лікар</option>
             <option>Самозвернення</option>
-            <option value="custom">інший лікар (вписати)</option>
+            <option>інший лікар (вписати)</option>
         </select>
-        <input type="text" id="custom-referral" placeholder="ПІБ лікаря..." style="width: 200px; display: none; margin-left: 5px;">
     </div>
     <div class="row">
         <span class="label">Адреса проживання:</span> <input type="text" style="width: 580px;" value="">
@@ -345,8 +351,9 @@
     </div>
     <div class="row"><span class="label">Ураження:</span> <input type="text" style="width: 580px;" value=""></div>
 
-    <!-- ДВАНАДЦЯТИПАЛА КИШКА -->
+    <!-- ДВАНАДЦЯТИПАЛА КИШКА (Переставлено рядочки) -->
     <div class="row" style="padding-top: 2px;"><span class="section-title">ДВАНАДЦЯТИПАЛА КИШКА</span></div>
+    
     <div class="row">
         <span class="label">Просвіт:</span> 
         <input type="text" id="du-lumen" value="" style="width: 200px;">
@@ -375,29 +382,7 @@
             <option>ригідна</option>
         </select>
     </div>
-    <div class="row">
-        <span class="label">Перистальтика:</span> 
-        <input type="text" id="du-peristaltica" value="" style="width: 120px;">
-        <select class="noprint helper-select" data-target="du-peristaltica">
-            <option>нормальна</option>
-            <option>послаблена</option>
-            <option>відсутня</option>
-        </select>
-
-        <span class="label" style="padding-left: 10px;">Pap. Fateri:</span> 
-        <input type="text" id="du-papilla" value="" style="width: 120px;">
-        <select class="noprint helper-select" data-target="du-papilla">
-            <option>округлої форми</option>
-            <option>збільшений</option>
-        </select>
-
-        <span class="label" style="padding-left: 10px;">Відтік жовчі:</span> 
-        <input type="text" id="du-bile" value="" style="width: 100px;">
-        <select class="noprint helper-select" data-target="du-bile">
-            <option>не порушений</option>
-            <option>порушений</option>
-        </select>
-    </div>
+    
     <div class="row">
         <span class="label">Слизова цибулини ДПК:</span> 
         <input type="text" id="du-bulb" value="" style="width: 250px;">
@@ -429,6 +414,30 @@
             <option>набрякла</option>
             <option>зерниста</option>
             <option>по типу "манної крупи"</option>
+        </select>
+    </div>
+
+    <div class="row">
+        <span class="label">Перистальтика:</span> 
+        <input type="text" id="du-peristaltica" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="du-peristaltica">
+            <option>нормальна</option>
+            <option>послаблена</option>
+            <option>відсутня</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Pap. Fateri:</span> 
+        <input type="text" id="du-papilla" value="" style="width: 120px;">
+        <select class="noprint helper-select" data-target="du-papilla">
+            <option>округлої форми</option>
+            <option>збільшений</option>
+        </select>
+
+        <span class="label" style="padding-left: 10px;">Відтік жовчі:</span> 
+        <input type="text" id="du-bile" value="" style="width: 100px;">
+        <select class="noprint helper-select" data-target="du-bile">
+            <option>не порушений</option>
+            <option>порушений</option>
         </select>
     </div>
 
@@ -477,6 +486,7 @@
                     <option>позитивний</option>
                     <option>негативний</option>
                 </select>
+                <!-- Додано відступ зліва для текстового поля, щоб не злипалося -->
                 <input type="text" class="inline-text" style="width: 80px; margin-left: 5px;">
             </span>
             <span class="diag-item">
@@ -503,10 +513,11 @@
         <input type="text" id="treat-input" value="не проводились" style="width: 500px;">
     </div>
 
-    <!-- ЗАКЛЮЧЕННЯ -->
-    <div class="row" style="padding-top: 4px;">
-        <span class="section-title" style="font-size: 13pt;">ЗАКЛЮЧЕННЯ:</span>
+    <!-- ЗАКЛЮЧЕННЯ (Збільшений шрифт, жирний, підкреслений) -->
+    <div class="row" style="padding-top: 10px;">
+        <span class="section-title" style="font-size: 15pt; font-weight: bold; text-decoration: underline;">ЗАКЛЮЧЕННЯ:</span>
     </div>
+    
     <div class="conclusion-box">
         <!-- 1. СТРАВОХІД -->
         <div>
@@ -699,7 +710,6 @@
             <span class="label">Дата:</span> <input type="date" id="current-date" style="border:none; font-family:'Times New Roman',serif; font-size:10.5pt;">
         </div>
         
-        <!-- Кнопка друку по центру (зникає при друку) -->
         <div class="noprint" style="width: 30%; text-align: center;">
             <button type="button" class="print-btn" onclick="window.print()">🖨️ Друк / Зберегти в PDF</button>
         </div>
@@ -712,14 +722,12 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        // Встановлення поточної дати
         var today = new Date();
         var dd = String(today.getDate()).padStart(2, '0');
         var mm = String(today.getMonth() + 1).padStart(2, '0');
         var yyyy = today.getFullYear();
         document.getElementById('current-date').value = yyyy + '-' + mm + '-' + dd;
         
-        // Створення випадаючих списків для опису
         var selects = document.querySelectorAll("select.helper-select");
         for (var i = 0; i < selects.length; i++) {
             (function(sel) {
@@ -776,15 +784,12 @@
             }
         });
         
-        // Логіка для миттєвого відображення вибраних діагнозів у заключенні
         var conclCheckboxes = document.querySelectorAll('.conclusion-item input[type="checkbox"]');
         for (var c = 0; c < conclCheckboxes.length; c++) {
             conclCheckboxes[c].addEventListener('change', refreshConclusionVisibility);
         }
-        refreshConclusionVisibility();
     });
 
-    // Логіка додавання значень з ▼
     function appendMultiTextId(inputId, val) {
         var input = document.getElementById(inputId);
         if (!input) return;
@@ -816,7 +821,6 @@
         }
     }
 
-    // Розгортання/згортання блоків заключення та перерахунок видимості
     function toggleSection(sectionId, checkbox) {
         var section = document.getElementById(sectionId);
         if (checkbox.checked) {
@@ -827,7 +831,6 @@
         refreshConclusionVisibility();
     }
 
-    // Головна функція, яка робить вибрані діагнози постійно видимими
     function refreshConclusionVisibility() {
         var items = document.querySelectorAll('.conclusion-item');
         for (var i = 0; i < items.length; i++) {
@@ -837,14 +840,12 @@
             
             var isChecked = cb && cb.checked;
             
-            // Якщо вибрано - виділяємо жирним
             if (isChecked) {
                 items[i].style.fontWeight = 'bold';
             } else {
                 items[i].style.fontWeight = 'normal';
             }
             
-            // Видимість
             if (parent.classList.contains('expanded')) {
                 items[i].style.display = 'block';
             } else {
@@ -872,14 +873,13 @@
     }
 
     window.addEventListener('beforeprint', function() {
-        // Приховуємо невідмічені діагнози (на випадок, якщо список розгорнуто)
         var items = document.querySelectorAll('.conclusion-item');
         for (var i = 0; i < items.length; i++) {
             var cb = items[i].querySelector('input[type="checkbox"]');
             if (cb && !cb.checked) {
                 items[i].style.display = 'none';
             }
-            items[i].style.fontWeight = 'normal'; // Прибираємо жирний шрифт для гарного друку
+            items[i].style.fontWeight = 'normal'; 
         }
         
         var diagItems = document.querySelectorAll('.diag-item');
@@ -916,7 +916,7 @@
         if(wrap && document.querySelector('.diag-item input[type="checkbox"]').checked) {
              wrap.style.display = 'inline';
         }
-        refreshConclusionVisibility(); // Повертаємо видимість та жирний шрифт
+        refreshConclusionVisibility();
     });
 
     function toggleSedationDetails() {
