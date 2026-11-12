@@ -58,10 +58,7 @@
         @page { size: A4; margin: 0.5cm; }
         body { padding: 0; font-size: 9.5pt; line-height: 1.05; }
         .container { max-width: 100%; width: 100%; }
-        
-        /* Виправляємо друк селектів, зокрема "Ким направлений" */
-        input[type="text"], input[type="number"] { border: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: transparent !important; margin: 0 !important; padding: 0 !important; height: auto !important; }
-        select:not(.noprint) { border: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: transparent !important; margin: 0 !important; padding: 0 !important; height: auto !important; }
+        input[type="text"], input[type="number"], select { border: none !important; appearance: none; -webkit-appearance: none; -moz-appearance: none; background: transparent !important; margin: 0 !important; padding: 0 !important; height: auto !important; }
         
         .noprint { display: none !important; }
         
@@ -100,17 +97,19 @@
         
         <span class="label" style="padding-left: 10px;">Вік:</span> <input type="text" style="width: 45px;" value="">
     </div>
+    
     <div class="row">
         <span class="label">Амбулаторна МК №:</span> <input type="text" style="width: 100px;" value="">
         <span class="label" style="padding-left: 10px;">Ким направлений:</span> 
-        <!-- Прибрав клас noprint, додав print-hidden, який знімається через скрипт -->
-        <select id="referral-select" onchange="toggleReferralInput()" style="border: none; background: transparent; font-family: 'Times New Roman', serif; font-size: 10.5pt; outline: none;">
+        
+        <!-- Ідеальне рішення для "Ким направлений": текстове поле + вибір стандартних опцій поруч -->
+        <input type="text" id="referral-input" style="width: 250px;" value="">
+        <select class="noprint helper-select" data-target="referral-input">
             <option>Сімейний лікар</option>
             <option>Самозвернення</option>
-            <option value="custom">інший лікар (вписати)</option>
         </select>
-        <input type="text" id="custom-referral" placeholder="ПІБ лікаря..." style="width: 200px; display: none; margin-left: 5px;">
     </div>
+    
     <div class="row">
         <span class="label">Адреса проживання:</span> <input type="text" style="width: 580px;" value="">
     </div>
@@ -123,7 +122,7 @@
     <div class="row">
         <span class="label">Обробка апарату:</span> <input type="text" style="width: 250px;" value="террацид преміум 10 хвилин">
         <span class="label" style="padding-left: 10px;">Знеболення:</span> 
-        <select id="anesthesia-select" onchange="toggleSedationDetails()" style="border: none; background: transparent; font-family: 'Times New Roman', serif; font-size: 10.5pt; outline: none;">
+        <select id="anesthesia-select" onchange="toggleSedationDetails()">
             <option>ні (місцева)</option>
             <option value="sedation" selected>в/в седація</option>
         </select>
@@ -250,7 +249,7 @@
         <!-- Допоміжний список для тексту -->
         <div class="noprint" style="margin-top: 3px; font-size: 9.5pt;">
             <i>Швидкі вставки:</i> 
-            <!-- Змінений текст поліпа з селектами -->
+            <!-- Змінений текст поліпа з селектами KUDO / Паризька -->
             <button class="dd-btn" onclick="insertPolypPathology()">+ Поліп</button>
             <button class="dd-btn" onclick="insertPathology('У [ ] відділі виявляється екзофітне пухлиноподібне утворення розміром до [ ] см, яке звужує просвіт, з горбистою поверхнею, контактно кровоточить. ')">+ Пухлина</button>
             <button class="dd-btn" onclick="insertPathology('У сигмоподібній та низхідній кишках визначаються множинні гирла дивертикулів діаметром від 3 до 8 мм, без ознак запалення. ')">+ Дивертикули</button>
@@ -321,11 +320,21 @@
                     взято <input type="text" id="biopsy-qty" class="inline-text" style="width: 25px; text-align: center;"> шматочків з <input type="text" id="biopsy-loc" class="inline-text" style="width: 250px;" placeholder="локалізація (напр. поліп сигмоподібної кишки)">
                 </span>
             </span>
-            <span class="diag-item" style="width: 100%; margin-top: 3px;">
-                <label><input type="checkbox" id="polypectomy-check" onchange="document.getElementById('poly-inputs').style.display = this.checked ? 'inline' : 'none';"> поліпектомія</label>
-                <span id="poly-inputs" style="display: none; margin-left: 2px;">
-                    <input type="text" class="inline-text" style="width: 450px;" placeholder="опис (метод: холодна петля / гаряча петля, локалізація)">
-                </span>
+            
+            <!-- ОНОВЛЕНИЙ БЛОК ПОЛІПЕКТОМІЇ З КНОПКАМИ -->
+            <span class="diag-item" style="width: 100%; margin-top: 3px; display: block;">
+                <label><input type="checkbox" id="polypectomy-check" onchange="document.getElementById('poly-inputs').style.display = this.checked ? 'block' : 'none';"> поліпектомія</label>
+                
+                <div id="poly-inputs" style="display: none; margin-top: 4px; margin-bottom: 4px;">
+                    <textarea id="poly-desc" style="width: 100%; height: 60px; font-family: 'Times New Roman', serif; font-size: 10.5pt; padding: 4px; border: 1px solid #ccc; border-radius: 3px; resize: vertical;" placeholder="опис (метод, локалізація)"></textarea>
+                    
+                    <div class="noprint" style="margin-top: 3px; font-size: 9.5pt;">
+                        <i>Швидкі вставки:</i> 
+                        <button class="dd-btn" type="button" onclick="document.getElementById('poly-desc').value = 'з використанням ін\'єкційного катетеру, в підслизовий шар введено до 5 мл фіз розчину. Виконана ендоскопічна, мукозна резекція поліпа з використанням ендоскопічної петлі за допомогою апарату Olympus ESG-100 (режим: ForcedCoag 1, Coag: 35 w). В місце резекції накладено репозиційний кліпуючий пристрій ZKSK 10 мм. Гемостаз стабільний.'">+ Гаряча петля (Olympus)</button>
+                        <button class="dd-btn" type="button" onclick="document.getElementById('poly-desc').value = 'з використанням ін\'єкційного катетеру, в підслизовий шар введено до 5 мл фіз розчину. Виконана ендоскопічна, мукозна резекція поліпа з використанням «холодної» ендоскопічної петлі. Гемостаз стабільний.'">+ Холодна петля</button>
+                        <button class="dd-btn" type="button" onclick="document.getElementById('poly-desc').value = ''">Очистити</button>
+                    </div>
+                </div>
             </span>
         </span>
     </div>
@@ -339,6 +348,7 @@
             <input type="checkbox" onchange="toggleSection('block-concl', this)" checked> Відкрити список діагнозів
         </label>
         <div id="block-concl" class="sub-conclusion expanded">
+            <!-- Знято галочку за замовчуванням -->
             <div class="conclusion-item" style="display: block;"><label><input type="checkbox"> Патологічних змін слизової оболонки товстої кишки не виявлено</label> <input type="text" class="inline-text" style="width: 100px;"></div>
             <div class="conclusion-item">
                 <label><input type="checkbox"> Поліп(и)</label> 
@@ -504,6 +514,7 @@
         if (!input) return;
         var current = input.value.replace(/^\s+|\s+$/g, '');
         
+        // Слова-дефолти, які стираються при виборі іншого варіанту
         var defaults = ["невелика кількість прозорої рідини", "збережений", "виражені добре, циркулярні", "чіткий", "рожева, гладка, блискуча на всьому протязі", "не збільшені", "купола сліпої кишки", "Ізіклін"];
         
         var isDefault = false;
@@ -517,7 +528,8 @@
         if (current === "" || isDefault || val.indexOf("▼") !== -1) {
             if (val.indexOf("▼") === -1) input.value = val;
         } else {
-            if(inputId === 'prep-drug' || inputId === 'scope-depth' || inputId === 'anorectal-nodes' || inputId === 'sphincter-tone') {
+            // Тепер поле referral-input також повністю замінює текст, а не додає через кому
+            if(inputId === 'prep-drug' || inputId === 'scope-depth' || inputId === 'anorectal-nodes' || inputId === 'sphincter-tone' || inputId === 'referral-input') {
                 input.value = val;
             } else {
                 var parts = current.split(",");
@@ -651,21 +663,6 @@
         }
     }
 
-    // Направлення
-    function toggleReferralInput() {
-        var select = document.getElementById("referral-select");
-        var customInput = document.getElementById("custom-referral");
-        if (select.value === "custom") {
-            customInput.style.display = "inline-block";
-            customInput.focus();
-            select.classList.add("print-hidden");
-        } else {
-            customInput.style.display = "none";
-            customInput.value = "";
-            select.classList.remove("print-hidden");
-        }
-    }
-
     // Анестезія
     function toggleSedationDetails() {
         var select = document.getElementById("anesthesia-select");
@@ -674,15 +671,9 @@
     }
 
     // ==========================================
-    // ЛОГІКА ПЕРЕД ДРУКОМ
+    // ЛОГІКА ПЕРЕД ДРУКОМ (РОЗУМНИЙ ПЕРЕНОС ТЕКСТУ)
     // ==========================================
     window.addEventListener('beforeprint', function() {
-        // Забезпечуємо відображення значення з селекта "Ким направлений", якщо це не custom
-        var refSelect = document.getElementById("referral-select");
-        if (refSelect.value !== "custom") {
-             refSelect.classList.remove("noprint");
-        }
-
         var items = document.querySelectorAll('.conclusion-item');
         for (var i = 0; i < items.length; i++) {
             var cb = items[i].querySelector('input[type="checkbox"]');
@@ -712,7 +703,8 @@
              if(wrap) wrap.style.display = 'none';
         }
 
-        var textInputs = document.querySelectorAll('input.inline-text, textarea, input#anorectal-nodes');
+        // Перетворюємо всі текстові поля на текст для автоматичного розширення і переносу при друку
+        var textInputs = document.querySelectorAll('input[type="text"], textarea');
         for (var m = 0; m < textInputs.length; m++) {
             var inp = textInputs[m];
             var span = document.createElement('span');
@@ -727,13 +719,17 @@
                 span.style.display = 'inline';
                 if (inp.closest('#block-concl')) {
                     span.style.fontSize = '12.5pt';
-                } else {
+                } else if (inp.classList.contains('inline-text')) {
                     span.style.fontSize = '10pt';
+                } else {
+                    span.style.fontSize = inp.style.fontSize || '10.5pt';
+                    span.style.fontWeight = inp.style.fontWeight || 'normal';
                 }
             }
             
             span.textContent = inp.value;
             
+            // Якщо поле порожнє, малюємо лінію
             if (!inp.value) {
                 span.style.display = 'inline-block';
                 span.style.borderBottom = '1px solid #000';
@@ -748,12 +744,9 @@
     });
 
     // ==========================================
-    // ВІДНОВЛЕННЯ ПІСЛЯ ДРУКУ
+    // ВІДНОВЛЕННЯ ВИГЛЯДУ ПІСЛЯ ДРУКУ
     // ==========================================
     window.addEventListener('afterprint', function() {
-        var refSelect = document.getElementById("referral-select");
-        refSelect.classList.add("noprint");
-
         var cbs = document.querySelectorAll('input[type="checkbox"]');
         for (var k = 0; k < cbs.length; k++) {
             cbs[k].style.display = '';
@@ -769,11 +762,12 @@
         }
         var polyWrap = document.getElementById('poly-inputs');
         if(polyWrap && document.getElementById('polypectomy-check').checked) {
-             polyWrap.style.display = 'inline';
+             polyWrap.style.display = 'block';
         }
         
         refreshConclusionVisibility();
 
+        // Повертаємо всі поля вводу замість звичайного тексту
         var hiddenInputs = document.querySelectorAll('.was-hidden');
         for (var m = 0; m < hiddenInputs.length; m++) {
             hiddenInputs[m].style.display = '';
