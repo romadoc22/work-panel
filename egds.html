@@ -78,8 +78,9 @@
         .separator { display: none !important; height: 0 !important; margin: 0 !important; }
         .conclusion-item { margin-bottom: 0 !important; }
         .main-section-label { display: none !important; }
-        .diag-item { display: inline !important; margin-right: 12px !important; }
-        .diag-item label { display: inline !important; }
+        .diag-item { display: inline; margin-right: 12px; }
+        .diag-item label { display: inline; }
+        .print-hide-unchecked { display: none !important; }
     }
 </style>
 </head>
@@ -923,7 +924,7 @@
         for (var i = 0; i < items.length; i++) {
             var cb = items[i].querySelector('input[type="checkbox"]');
             if (cb && !cb.checked) {
-                items[i].style.display = 'none';
+                items[i].classList.add('print-hide-unchecked');
             }
             items[i].style.fontWeight = 'normal'; 
         }
@@ -932,7 +933,7 @@
         for (var j = 0; j < diagItems.length; j++) {
             var diagCb = diagItems[j].querySelector('input[type="checkbox"]');
             if (diagCb && !diagCb.checked) {
-                diagItems[j].style.display = 'none';
+                diagItems[j].classList.add('print-hide-unchecked');
             }
         }
         
@@ -974,13 +975,14 @@
             textInputs[n].style.display = textInputs[n].dataset.prevDisplay || '';
         }
 
+        var hiddenItems = document.querySelectorAll('.print-hide-unchecked');
+        for (var h = 0; h < hiddenItems.length; h++) {
+            hiddenItems[h].classList.remove('print-hide-unchecked');
+        }
+
         var cbs = document.querySelectorAll('input[type="checkbox"]');
         for (var k = 0; k < cbs.length; k++) {
             cbs[k].style.display = '';
-        }
-        var diagItems = document.querySelectorAll('.diag-item');
-        for (var j = 0; j < diagItems.length; j++) {
-            diagItems[j].style.display = '';
         }
         var wrap = document.getElementById('biopsy-inputs');
         if(wrap && document.querySelector('.diag-item input[type="checkbox"]').checked) {
